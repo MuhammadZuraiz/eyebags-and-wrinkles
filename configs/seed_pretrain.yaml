@@ -1,0 +1,46 @@
+# Seed pre-annotator — a THROWAWAY model trained on the ~300-crop seed, used
+# only to pre-fill predictions for the remainder (scripts/predict_preannotations.py).
+# It is NOT the final model: shorter schedule, both heads on so it can pre-fill
+# severity AND dark circles. Every prediction it makes is human-reviewed before
+# it enters real training.
+#
+#   python scripts/train.py --config configs/seed_pretrain.yaml
+#   python scripts/predict_preannotations.py \
+#       --checkpoint experiments/seed_pretrain/best.pt \
+#       --tasks data/tasks/subset_remainder.json \
+#       --output data/tasks/subset_remainder_preds.json
+
+output_dir: experiments/seed_pretrain
+
+model:
+  encoder: convnext_tiny
+  pretrained: true
+  severity_grades: 5
+  proj_dim: 512
+  dropout: 0.2
+  use_severity_head: true        # pre-fills the 0-4 grade
+  use_dark_circles_head: true    # pre-fills the dark-circles yes/no
+
+data:
+  train_csv: data/seed_splits/train.csv
+  val_csv:   data/seed_splits/val.csv
+  crops_dir: null
+  balance_by: severity
+  sampler_smoothing: 0.5
+
+training:
+  epochs: 25                     # short — this is a labeling aid, not the deliverable
+  batch_size: 64
+  num_workers: 2
+  encoder_lr: 0.00003
+  head_lr: 0.0003
+  weight_decay: 0.0001
+  warmup_epochs: 2
+  early_stopping_patience: 8
+  mixed_precision: true
+  monitor: val_qwk
+
+loss_weights:
+  presence_bce: 1.0
+  severity_corn: 1.0
+  confounders_bce: 0.25

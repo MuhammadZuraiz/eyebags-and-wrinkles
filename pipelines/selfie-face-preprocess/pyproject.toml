@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "skin-selfie-preprocess"
+version = "0.1.0"
+description = "Face-only selfie preprocessing pipeline for downstream skin issue ML models."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+  { name = "Codex" }
+]
+dependencies = [
+  "numpy>=1.24",
+  "Pillow>=10.0"
+]
+
+[project.optional-dependencies]
+full = [
+  "opencv-python-headless>=4.8",
+  "mediapipe>=0.10.14; python_version < '3.13'"
+]
+heif = [
+  "pillow-heif>=0.16"
+]
+
+[project.scripts]
+skin-preprocess = "selfie_face_preprocess.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/selfie_face_preprocess"]

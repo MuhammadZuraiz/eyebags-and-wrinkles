@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DermaLens — Eye-bag &amp; Wrinkle Verifier</title>
+<style>
+  :root {
+    --bg:#0f1115; --panel:#181b22; --panel2:#1f2430; --line:#2a3140;
+    --text:#e7ebf2; --muted:#9aa4b2; --accent:#6aa8ff;
+    --green:#3ecf8e; --amber:#e8b339; --red:#e2574c;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif; }
+  header { padding:16px 22px; border-bottom:1px solid var(--line);
+           display:flex; align-items:center; gap:14px; }
+  header h1 { font-size:16px; margin:0; font-weight:600; letter-spacing:.2px; }
+  header .pill { font-size:12px; color:var(--muted); border:1px solid var(--line);
+                 padding:3px 9px; border-radius:999px; }
+  .wrap { max-width:1180px; margin:0 auto; padding:22px; }
+  .drop { border:1.5px dashed var(--line); border-radius:12px; padding:26px;
+          text-align:center; cursor:pointer; transition:.15s; background:var(--panel); }
+  .drop.hover { border-color:var(--accent); background:#1a2030; }
+  .drop input { display:none; }
+  .row { display:flex; gap:18px; flex-wrap:wrap; align-items:flex-start; }
+  .thumb { max-height:120px; border-radius:8px; border:1px solid var(--line); }
+  button { background:var(--accent); color:#06101f; border:0; font-weight:600;
+           padding:10px 18px; border-radius:8px; cursor:pointer; font-size:14px; }
+  button:disabled { opacity:.5; cursor:default; }
+  .banner { padding:12px 16px; border-radius:10px; font-weight:600; margin:18px 0;
+            display:flex; gap:10px; align-items:center; }
+  .banner.show_guidance { background:rgba(62,207,142,.13); color:var(--green); border:1px solid rgba(62,207,142,.4); }
+  .banner.abstain { background:rgba(232,179,57,.13); color:var(--amber); border:1px solid rgba(232,179,57,.4); }
+  .banner.retake_requested { background:rgba(226,87,76,.13); color:var(--red); border:1px solid rgba(226,87,76,.4); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px; margin-top:8px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .card h3 { margin:0; padding:11px 14px; font-size:13px; border-bottom:1px solid var(--line); }
+  .card .cap { padding:8px 14px 12px; color:var(--muted); font-size:12px; }
+  .card img { width:100%; display:block; background:#0b0d12; cursor:zoom-in; }
+  .panels { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:760px){ .panels{ grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .panel h2 { font-size:13px; margin:0 0 10px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:500; }
+  .bar { height:7px; border-radius:4px; background:var(--panel2); overflow:hidden; }
+  .bar > span { display:block; height:100%; background:var(--accent); }
+  details { margin-top:18px; } summary { cursor:pointer; color:var(--muted); }
+  pre { background:#0b0d12; border:1px solid var(--line); border-radius:10px; padding:14px;
+        overflow:auto; font-size:12px; max-height:420px; }
+  .muted { color:var(--muted); }
+  .err { color:var(--red); margin-top:12px; }
+  #lightbox { position:fixed; inset:0; background:rgba(0,0,0,.85); display:none;
+              align-items:center; justify-content:center; z-index:50; cursor:zoom-out; }
+  #lightbox img { max-width:94vw; max-height:94vh; border-radius:8px; }
+  .legend { font-size:12px; color:var(--muted); margin-top:6px; }
+  .dot { display:inline-block; width:10px; height:10px; border-radius:3px; margin:0 4px -1px 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>DermaLens · Eye-bag &amp; Wrinkle Verifier</h1>
+  <span class="pill" id="status">checking…</span>
+  <span class="legend">grade colour:
+    <span class="dot" style="background:#3ec85a"></span>0
+    <span class="dot" style="background:#aad23c"></span>1
+    <span class="dot" style="background:#f0c832"></span>2
+    <span class="dot" style="background:#f08c28"></span>3
+    <span class="dot" style="background:#e63c32"></span>4
+    <span class="dot" style="background:#f03c3c"></span>wrinkle mask
+  </span>
+</header>
+
+<div class="wrap">
+  <label class="drop" id="drop">
+    <input type="file" id="file" accept="image/*" />
+    <div id="dropText"><strong>Drop a selfie here</strong> or click to choose · front-facing, even lighting</div>
+    <div class="row" id="previewRow" style="display:none; justify-content:center; margin-top:14px;">
+      <img class="thumb" id="preview" />
+    </div>
+  </label>
+
+  <div class="row" style="margin-top:16px; align-items:center;">
+    <button id="go" disabled>Analyze</button>
+    <span class="muted" id="fname"></span>
+  </div>
+
+  <div id="err" class="err"></div>
+  <div id="results" style="display:none;">
+    <div class="banner" id="banner"></div>
+
+    <div class="panels">
+      <div class="panel">
+        <h2>Eye bags</h2>
+        <table id="eyeTable"><tbody></tbody></table>
+      </div>
+      <div class="panel">
+        <h2>Wrinkles</h2>
+        <table id="wrTable"><tbody></tbody></table>
+      </div>
+    </div>
+
+    <h2 class="muted" style="margin:22px 0 6px; font-size:13px; text-transform:uppercase; letter-spacing:.6px;">
+      What the models focused on</h2>
+    <div class="grid" id="overlays"></div>
+
+    <details>
+      <summary>Raw JSON</summary>
+      <pre id="json"></pre>
+    </details>
+  </div>
+</div>
+
+<div id="lightbox"><img id="lightboxImg" /></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const fileInput = $("#file"), drop = $("#drop"), go = $("#go");
+let chosen = null;
+
+const CAPTIONS = {
+  eye_bag_overlay: "Under-eye ROI boxes — the exact region the eye-bag model sees, per eye.",
+  eye_crops: "The 256×160 crops fed to the model (left / right), boxed by predicted grade.",
+  wrinkle_overlay: "Wrinkle segmentation mask (red) from the U-Net — the pixels it flagged.",
+  wrinkle_regions: "Anatomical regions used for per-region scores (forehead, glabella, periocular, nasolabial).",
+  texture: "Texture map — the high-pass 4th input channel the wrinkle U-Net consumes.",
+};
+const ORDER = ["eye_bag_overlay","wrinkle_overlay","wrinkle_regions","eye_crops","texture"];
+
+fetch("/health").then(r=>r.json()).then(h=>{
+  $("#status").textContent = h.face_analyzer_loaded ? "models loaded" : "face analyzer NOT loaded";
+  $("#status").style.color = h.face_analyzer_loaded ? "var(--green)" : "var(--red)";
+}).catch(()=>{ $("#status").textContent="api offline"; });
+
+function pick(f){
+  if(!f) return;
+  chosen = f;
+  $("#fname").textContent = f.name;
+  go.disabled = false;
+  const url = URL.createObjectURL(f);
+  $("#preview").src = url; $("#previewRow").style.display = "flex";
+}
+fileInput.addEventListener("change", e => pick(e.target.files[0]));
+["dragover","dragenter"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("hover");}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("hover");}));
+drop.addEventListener("drop", e => pick(e.dataTransfer.files[0]));
+
+go.addEventListener("click", analyze);
+
+async function analyze(){
+  if(!chosen) return;
+  go.disabled = true; go.textContent = "Analyzing…"; $("#err").textContent=""; $("#results").style.display="none";
+  try {
+    const fd = new FormData(); fd.append("file", chosen);
+    const r = await fetch("/analyze/face/debug", { method:"POST", body:fd });
+    if(!r.ok){ throw new Error((await r.json().catch(()=>({}))).detail || ("HTTP "+r.status)); }
+    render(await r.json());
+  } catch(e){ $("#err").textContent = "Error: " + e.message; }
+  finally { go.disabled=false; go.textContent="Analyze"; }
+}
+
+function render(data){
+  const res = data.result, ov = data.overlays || {};
+  $("#results").style.display = "block";
+  const b = $("#banner");
+  b.className = "banner " + res.decision;
+  b.textContent = res.decision.replace("_"," ").toUpperCase() + " — " + (res.message||"").split("\n")[0];
+
+  // eye bag table
+  const eb = res.eye_bags, et = $("#eyeTable tbody");
+  if(eb && eb.available){
+    et.innerHTML = "<tr><th>eye</th><th>present p</th><th>grade</th><th>label</th><th>conf</th></tr>" +
+      ["left","right"].map(s=>{const e=eb[s]; return e?
+        `<tr><td>${s}</td><td>${e.present_probability}</td><td>${e.severity_grade}</td><td>${e.severity_label}</td><td>${e.confidence}</td></tr>`:""}).join("");
+  } else { et.innerHTML = "<tr><td class='muted'>eye-bag model unavailable or no valid crops</td></tr>"; }
+
+  // wrinkle table
+  const wr = res.wrinkles, wt = $("#wrTable tbody");
+  if(wr && wr.mask_available){
+    let rows = `<tr><th>metric</th><th>value</th></tr>`+
+      `<tr><td>overall score</td><td>${bar(wr.overall_score)} ${wr.overall_score}</td></tr>`+
+      `<tr><td>coverage</td><td>${wr.coverage_fraction}</td></tr>`;
+    for(const [k,v] of Object.entries(wr.regions||{})) rows += `<tr><td>${k}</td><td>${bar(Math.min(v*8,1))} ${v}</td></tr>`;
+    wt.innerHTML = rows;
+  } else { wt.innerHTML = "<tr><td class='muted'>wrinkle model unavailable or no face</td></tr>"; }
+
+  // overlays
+  const g = $("#overlays"); g.innerHTML = "";
+  ORDER.filter(k=>ov[k]).forEach(k=>{
+    const c = document.createElement("div"); c.className="card";
+    c.innerHTML = `<h3>${k.replace(/_/g," ")}</h3><img src="${ov[k]}" /><div class="cap">${CAPTIONS[k]||""}</div>`;
+    c.querySelector("img").addEventListener("click",()=>zoom(ov[k]));
+    g.appendChild(c);
+  });
+  if(!g.children.length) g.innerHTML = "<p class='muted'>No overlays (image rejected before model inference).</p>";
+
+  $("#json").textContent = JSON.stringify(res, null, 2);
+}
+
+function bar(v){ const p=Math.round(Math.max(0,Math.min(1,v))*100);
+  return `<span class="bar" style="display:inline-block;width:90px;vertical-align:middle"><span style="width:${p}%"></span></span>`; }
+function zoom(src){ $("#lightboxImg").src=src; $("#lightbox").style.display="flex"; }
+$("#lightbox").addEventListener("click",()=>$("#lightbox").style.display="none");
+</script>
+</body>
+</html>

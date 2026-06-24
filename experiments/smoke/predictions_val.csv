@@ -1,0 +1,15 @@
+image_path,presence_true,presence_prob,severity_true,severity_pred,severity_conf,abs_error,subject_id,source_dataset,age_band,eye
+data\smoke\crops\subj007_left.jpg,1.0,0.7279915,4,2,0.519709,2,subj007,dermalens_smoke,,left
+data\smoke\crops\subj007_right.jpg,1.0,0.7229614,4,2,0.5187243,2,subj007,dermalens_smoke,,right
+data\smoke\crops\subj010_left.jpg,1.0,0.6684786,2,1,0.53544444,1,subj010,dermalens_smoke,,left
+data\smoke\crops\subj010_right.jpg,1.0,0.6412096,2,1,0.5455568,1,subj010,dermalens_smoke,,right
+data\smoke\crops\subj021_left.jpg,0.0,0.63605994,0,1,0.5449617,1,subj021,dermalens_smoke,,left
+data\smoke\crops\subj021_right.jpg,0.0,0.62843996,0,1,0.55299884,1,subj021,dermalens_smoke,,right
+data\smoke\crops\subj022_left.jpg,1.0,0.6454131,1,1,0.5459555,0,subj022,dermalens_smoke,,left
+data\smoke\crops\subj022_right.jpg,1.0,0.6800903,1,1,0.5238497,0,subj022,dermalens_smoke,,right
+data\smoke\crops\subj024_left.jpg,1.0,0.6704688,3,1,0.52941704,2,subj024,dermalens_smoke,,left
+data\smoke\crops\subj024_right.jpg,1.0,0.6859073,3,1,0.52023554,2,subj024,dermalens_smoke,,right
+data\smoke\crops\subj045_left.jpg,1.0,0.74693,3,2,0.5282446,1,subj045,dermalens_smoke,,left
+data\smoke\crops\subj045_right.jpg,1.0,0.66373,3,1,0.5334093,2,subj045,dermalens_smoke,,right
+data\smoke\crops\subj046_left.jpg,0.0,0.63270456,0,1,0.5508005,1,subj046,dermalens_smoke,,left
+data\smoke\crops\subj046_right.jpg,0.0,0.6386136,0,1,0.54904544,1,subj046,dermalens_smoke,,right

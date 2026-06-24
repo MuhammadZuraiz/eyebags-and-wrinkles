@@ -1,0 +1,13 @@
+DermaLens Split Report
+========================================
+Source: data/annotations/seed.csv
+Total images: 268
+
+train.csv         : 213 rows
+val.csv           : 55 rows
+test_internal.csv : 0 rows
+test_external.csv : 0 rows  <-- FREEZE THIS
+
+WARNING: Do not look at test_external.csv results until the model
+is completely finalised. Tuning on external test results invalidates
+the evaluation.

@@ -1,0 +1,40 @@
+# Day 8 — Full multi-task model: presence + CORAL severity + dark-circles.
+# This is the model the MVP ships with.
+# Warm-start from Day 7:
+#   python scripts/train.py --config configs/multitask.yaml \
+#       --warm-start experiments/ordinal_severity/best.pt
+
+output_dir: experiments/multitask
+
+model:
+  encoder: convnext_tiny
+  pretrained: true
+  severity_grades: 5
+  proj_dim: 512
+  dropout: 0.2
+  use_severity_head: true
+  use_dark_circles_head: true    # ← confounder head ON
+
+data:
+  train_csv: data/splits/train.csv
+  val_csv:   data/splits/val.csv
+  crops_dir: null
+  balance_by: severity
+  sampler_smoothing: 0.2          # match the winning ordinal v3 run
+
+training:
+  epochs: 80
+  batch_size: 64
+  num_workers: 2
+  encoder_lr: 0.00003
+  head_lr: 0.0003
+  weight_decay: 0.0001
+  warmup_epochs: 3
+  early_stopping_patience: 16     # match the winning ordinal v3 run
+  mixed_precision: true
+  monitor: val_qwk               # still gate on severity; dc head is a co-task
+
+loss_weights:
+  presence_bce: 1.0
+  severity_corn: 1.0
+  confounders_bce: 0.25          # small — confounder head is a regulariser

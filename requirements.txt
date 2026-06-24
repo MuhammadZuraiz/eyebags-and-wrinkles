@@ -1,0 +1,34 @@
+# Core ML
+torch>=2.2
+torchvision>=0.17
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3
+pyyaml>=6.0
+
+# Vision / preprocessing
+opencv-python-headless>=4.8
+mediapipe==0.10.14   # legacy FaceMesh (src/preprocessing/face_landmarks.py) needs
+                     # this pin. The unified pipeline (src/face_analysis) instead
+                     # uses the Tasks Face Landmarker via selfie-face-preprocess,
+                     # which also runs on 0.10.14 — do not upgrade blindly.
+pillow>=10.0
+albumentations>=1.4
+
+# Shared face front-end for the unified eye-bags + wrinkles pipeline.
+# Local package; install editable from the repo:
+#   python -m pip install -e pipelines/selfie-face-preprocess
+# skin-selfie-preprocess
+
+# Serving / export
+fastapi>=0.110
+uvicorn[standard]>=0.27
+python-multipart>=0.0.9
+onnx>=1.15
+onnxruntime>=1.17
+onnxscript>=0.1
+
+# Analysis / annotation
+matplotlib>=3.8
+pytest>=8.0
+# label-studio   # install separately on the annotation machine only

@@ -1,0 +1,38 @@
+# Day 5 — Binary presence baseline.
+# Purpose: validate labels, crops, pipeline. NOT the final model.
+# Run: python scripts/train.py --config configs/baseline_binary.yaml
+
+output_dir: experiments/baseline_binary
+
+model:
+  encoder: convnext_tiny
+  pretrained: true
+  severity_grades: 5
+  proj_dim: 512
+  dropout: 0.2
+  use_severity_head: false       # ← binary stage: presence head only
+  use_dark_circles_head: false
+
+data:
+  train_csv: data/splits/train.csv
+  val_csv:   data/splits/val.csv
+  crops_dir: null                # set if CSV paths are relative to a folder
+  balance_by: presence           # binary stage: balance pos vs neg
+  sampler_smoothing: 0.5
+
+training:
+  epochs: 40
+  batch_size: 64
+  num_workers: 2
+  encoder_lr: 0.00003
+  head_lr: 0.0003
+  weight_decay: 0.0001
+  warmup_epochs: 3
+  early_stopping_patience: 10
+  mixed_precision: true
+  monitor: val_auroc             # binary stage monitors AUROC
+
+loss_weights:
+  presence_bce: 1.0
+  severity_corn: 0.0
+  confounders_bce: 0.0

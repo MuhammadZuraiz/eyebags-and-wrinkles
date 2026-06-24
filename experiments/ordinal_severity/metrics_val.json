@@ -1,0 +1,56 @@
+{
+  "checkpoint": "experiments\\ordinal_severity\\best.pt",
+  "csv": "data\\splits\\val.csv",
+  "n_crops": 71,
+  "metrics": {
+    "sensitivity": 0.9836065573770492,
+    "specificity": 0.4,
+    "precision": 0.9090909090909091,
+    "f1": 0.9448818897637795,
+    "accuracy": 0.9014084507042254,
+    "auroc": 0.9622950819672131,
+    "auprc": 0.9940066443671423,
+    "brier": 0.07563751935958862,
+    "ece": 0.07322529535478273,
+    "mae": 0.4788732394366197,
+    "exact": 0.5492957746478874,
+    "within_one": 0.971830985915493,
+    "qwk": 0.6910922830318296
+  },
+  "subgroups": {
+    "source_dataset": {
+      "ffhq_pd_subset": {
+        "n": 67,
+        "reliable": true,
+        "sensitivity": 0.9824561403508771,
+        "specificity": 0.4,
+        "precision": 0.9032258064516129,
+        "f1": 0.9411764705882353,
+        "accuracy": 0.8955223880597015,
+        "auroc": 0.9684210526315788,
+        "auprc": 0.994721639765635,
+        "brier": 0.07983452826738358,
+        "ece": 0.0800717725460209,
+        "mae": 0.47761194029850745,
+        "exact": 0.5522388059701493,
+        "within_one": 0.9701492537313433,
+        "qwk": 0.6963746223564955
+      },
+      "london_faces": {
+        "n": 4,
+        "reliable": false,
+        "sensitivity": 1.0,
+        "specificity": 0.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0,
+        "auroc": NaN,
+        "auprc": NaN,
+        "mae": 0.5,
+        "exact": 0.5,
+        "within_one": 1.0,
+        "qwk": 0.4285714285714286
+      }
+    }
+  }
+}

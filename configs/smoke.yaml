@@ -1,0 +1,22 @@
+output_dir: experiments/smoke
+model:
+  encoder: resnet18
+  pretrained: false
+  severity_grades: 5
+  use_severity_head: true
+  use_dark_circles_head: true
+data:
+  train_csv: data/smoke/splits/train.csv
+  val_csv:   data/smoke/splits/val.csv
+  balance_by: severity
+training:
+  epochs: 4
+  batch_size: 16
+  num_workers: 0
+  mixed_precision: false
+  monitor: val_qwk
+  early_stopping_patience: 10
+loss_weights:
+  presence_bce: 1.0
+  severity_corn: 1.0
+  confounders_bce: 0.25

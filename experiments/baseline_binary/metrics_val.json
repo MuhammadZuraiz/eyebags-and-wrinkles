@@ -1,0 +1,44 @@
+{
+  "checkpoint": "experiments\\baseline_binary\\best.pt",
+  "csv": "data\\splits\\val.csv",
+  "n_crops": 71,
+  "metrics": {
+    "sensitivity": 1.0,
+    "specificity": 0.3,
+    "precision": 0.8970588235294118,
+    "f1": 0.9457364341085271,
+    "accuracy": 0.9014084507042254,
+    "auroc": 0.9672131147540984,
+    "auprc": 0.9948586241875992,
+    "brier": 0.07130593061447144,
+    "ece": 0.07392261166807627
+  },
+  "subgroups": {
+    "source_dataset": {
+      "ffhq_pd_subset": {
+        "n": 67,
+        "reliable": true,
+        "sensitivity": 1.0,
+        "specificity": 0.3,
+        "precision": 0.890625,
+        "f1": 0.9421487603305785,
+        "accuracy": 0.8955223880597015,
+        "auroc": 0.9701754385964912,
+        "auprc": 0.9950643366260083,
+        "brier": 0.07494096457958221,
+        "ece": 0.08204155915708686
+      },
+      "london_faces": {
+        "n": 4,
+        "reliable": false,
+        "sensitivity": 1.0,
+        "specificity": 0.0,
+        "precision": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0,
+        "auroc": NaN,
+        "auprc": NaN
+      }
+    }
+  }
+}

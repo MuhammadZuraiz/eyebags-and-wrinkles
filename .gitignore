@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.venv-ls/
+*.egg-info/
+.pytest_cache/
+
+# Local tooling
+.codex/
+.agents/
+
+# Model weights & large binaries — never in git (>100MB GitHub limit).
+# Store in a cloud bucket / model registry / GitHub Release instead.
+*.pt
+*.onnx
+*.onnx.data
+*.zip
+
+# Downloaded Colab run folders (contain weights + duplicate outputs)
+*_run/
+
+# Face image data — license + size + privacy. NO real photos in the repo.
+data/raw/
+data/crops/
+data/external/
+data/tasks/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.webp
+*.tiff
+# Exception: the synthetic smoke dataset is safe and powers the smoke test
+!data/smoke/**
+
+# Private / scratch
+work/
+exports/
+
+# Kept on purpose: src, scripts, configs, tests, api, notebooks, docs,
+# data_contracts, requirements.txt, README, data/annotations + data/splits
+# (label CSVs), experiments/**/*.json + RUNLOG.md (small records).

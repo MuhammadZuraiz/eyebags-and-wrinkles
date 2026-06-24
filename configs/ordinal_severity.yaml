@@ -1,0 +1,40 @@
+# Day 7 — Ordinal severity model (CORAL grades 0-4).
+# Warm-start from Day 5:
+#   python scripts/train.py --config configs/ordinal_severity.yaml \
+#       --warm-start experiments/baseline_binary/best.pt
+
+output_dir: experiments/ordinal_severity
+
+model:
+  encoder: convnext_tiny
+  pretrained: true
+  severity_grades: 5
+  proj_dim: 512
+  dropout: 0.2
+  use_severity_head: true        # ← CORAL head ON
+  use_dark_circles_head: false
+
+data:
+  train_csv: data/splits/train.csv
+  val_csv:   data/splits/val.csv
+  crops_dir: null
+  balance_by: severity           # now balance across all 5 grades
+  sampler_smoothing: 0.2         # v3: stronger rebalancing. v2 (0.5) collapsed
+                                 # grades 1 and 3 into the modal grade 2 (QWK 0.53)
+
+training:
+  epochs: 80
+  batch_size: 64
+  num_workers: 2
+  encoder_lr: 0.00003
+  head_lr: 0.0003
+  weight_decay: 0.0001
+  warmup_epochs: 3
+  early_stopping_patience: 16    # v3: was 12; prev run stopped at epoch 7, too early
+  mixed_precision: true
+  monitor: val_qwk               # ordinal stage monitors quadratic-weighted kappa
+
+loss_weights:
+  presence_bce: 1.0
+  severity_corn: 1.0
+  confounders_bce: 0.0
