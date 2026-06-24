@@ -1,7 +1,11 @@
-# DermaLens — Under-Eye Bag Detection
+# DermaLens — Eye-bag &amp; Wrinkle Analysis
 
-Prototype ML pipeline for detecting and grading visible under-eye bags from
-selfies. Cosmetic skincare guidance only — **not a medical device**.
+Single-selfie detection of under-eye bags **and** wrinkles, with a verification
+web UI that overlays exactly what each model focused on. Cosmetic skincare
+guidance only — **not a medical device**.
+
+> 👉 **Running it for the first time? See [SETUP.md](SETUP.md)** (Python 3.10–3.12,
+> venv, the three model files, then `run_ui.ps1` / `run_ui.sh`).
 
 > **Not in version control** (see `.gitignore`): face image data
 > (`data/raw`, `data/crops`, `data/external`), model weights (`*.pt`, ONNX) and

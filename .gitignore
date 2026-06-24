@@ -15,6 +15,7 @@ __pycache__/
 *.pt
 *.onnx
 *.onnx.data
+*.task
 *.zip
 
 # Downloaded Colab run folders (contain weights + duplicate outputs)
